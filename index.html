@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#1a1a1a" />
+  <meta name="description" content="Self-organizing notebook with AI-powered tagging and local-first storage" />
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+  
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg" />
+  <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png" />
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="/src/css/main.css" />
+  <link rel="stylesheet" href="/src/css/components.css" />
+  <link rel="stylesheet" href="/src/css/responsive.css" />
+  
+  <title>Brain - Self-Organizing Notebook</title>
+</head>
+<body>
+  <!-- PWA Installation Banner (hidden by default) -->
+  <div id="install-banner" class="install-banner" hidden>
+    <div class="install-banner-content">
+      <p>Install Brain for the best experience</p>
+      <button id="install-button" class="btn btn-primary">Install</button>
+      <button id="dismiss-install" class="btn btn-secondary">Maybe Later</button>
+    </div>
+  </div>
+
+  <!-- Main Application Container -->
+  <div id="app" class="app">
+    <!-- Navigation Header -->
+    <header class="header">
+      <nav class="nav">
+        <div class="nav-brand">
+          <h1 class="brand-title">Brain</h1>
+        </div>
+        <div class="nav-menu">
+          <button id="nav-today" class="nav-item active" data-view="today">Today</button>
+          <button id="nav-library" class="nav-item" data-view="library">Library</button>
+          <button id="nav-toc" class="nav-item" data-view="toc">TOC</button>
+          <button id="nav-review" class="nav-item" data-view="review">Review</button>
+        </div>
+        <div class="nav-actions">
+          <button id="settings-btn" class="btn btn-icon" title="Settings">
+            <span class="icon">⚙️</span>
+          </button>
+          <div id="connection-status" class="connection-status online" title="Online">
+            <span class="status-dot"></span>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main">
+      <!-- Today View -->
+      <section id="today-view" class="view active">
+        <div class="view-header">
+          <h2>Today</h2>
+          <p class="view-subtitle">Capture your thoughts</p>
+        </div>
+        
+        <!-- Note Input -->
+        <div class="note-input-container">
+          <textarea 
+            id="note-input" 
+            class="note-input" 
+            placeholder="What's on your mind?"
+            rows="3"
+            data-testid="note-input"
+          ></textarea>
+          <div class="input-actions">
+            <button id="save-note" class="btn btn-primary" data-testid="save-button">Save</button>
+            <button id="clear-input" class="btn btn-secondary">Clear</button>
+          </div>
+        </div>
+
+        <!-- AI Status -->
+        <div id="ai-status" class="ai-status" hidden>
+          <div class="ai-status-content">
+            <span class="ai-spinner">🤖</span>
+            <span class="ai-message">Generating tags...</span>
+          </div>
+        </div>
+
+        <!-- Recent Notes -->
+        <div class="recent-notes">
+          <h3>Recent Notes</h3>
+          <div id="today-notes" class="notes-list" data-testid="today-notes">
+            <!-- Recent notes will be populated here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Library View -->
+      <section id="library-view" class="view">
+        <div class="view-header">
+          <h2>Library</h2>
+          <div class="search-container">
+            <input 
+              type="search" 
+              id="search-input" 
+              class="search-input" 
+              placeholder="Search notes..."
+              data-testid="search-input"
+            />
+            <button id="clear-search" class="btn btn-icon">✕</button>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+          <div id="tag-filters" class="tag-filters">
+            <!-- Tag filter chips will be populated here -->
+          </div>
+          <div class="filter-actions">
+            <button id="clear-filters" class="btn btn-secondary">Clear Filters</button>
+          </div>
+        </div>
+
+        <!-- Notes List -->
+        <div id="library-notes" class="notes-list" data-testid="library-notes">
+          <!-- Filtered notes will be populated here -->
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="pagination" hidden>
+          <button id="prev-page" class="btn btn-secondary">Previous</button>
+          <span id="page-info" class="page-info">Page 1 of 1</span>
+          <button id="next-page" class="btn btn-secondary">Next</button>
+        </div>
+      </section>
+
+      <!-- Table of Contents View -->
+      <section id="toc-view" class="view">
+        <div class="view-header">
+          <h2>Table of Contents</h2>
+          <p class="view-subtitle">Browse by topics</p>
+        </div>
+
+        <div id="toc-tags" class="toc-tags" data-testid="toc-tags">
+          <!-- Tag frequency list will be populated here -->
+        </div>
+      </section>
+
+      <!-- Review View -->
+      <section id="review-view" class="view">
+        <div class="view-header">
+          <h2>Review</h2>
+          <p class="view-subtitle">Revisit and remember</p>
+        </div>
+
+        <!-- Review Sections -->
+        <div class="review-sections">
+          <section class="review-section">
+            <h3>Due for Review</h3>
+            <div id="review-due" class="notes-list">
+              <!-- Notes due for review will be populated here -->
+            </div>
+          </section>
+
+          <section class="review-section">
+            <h3>Flashback of the Day</h3>
+            <div id="review-flashback" class="notes-list">
+              <!-- Flashback notes will be populated here -->
+            </div>
+          </section>
+
+          <section class="review-section">
+            <h3>Weak Spots</h3>
+            <div id="review-weakspots" class="weak-spots">
+              <!-- Underutilized tags will be populated here -->
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- Note Detail View -->
+      <section id="detail-view" class="view">
+        <div class="view-header">
+          <button id="back-to-library" class="btn btn-secondary">← Back</button>
+          <div class="detail-actions">
+            <button id="edit-note" class="btn btn-primary">Edit</button>
+            <button id="delete-note" class="btn btn-danger">Delete</button>
+          </div>
+        </div>
+
+        <div class="note-detail">
+          <div id="note-content" class="note-content">
+            <!-- Note content will be populated here -->
+          </div>
+          
+          <div class="note-meta">
+            <div class="note-tags">
+              <h4>Tags</h4>
+              <div id="note-tags-list" class="tags-list">
+                <!-- Note tags will be populated here -->
+              </div>
+            </div>
+            
+            <div class="note-timestamps">
+              <p class="timestamp">Created: <span id="created-at"></span></p>
+              <p class="timestamp">Updated: <span id="updated-at"></span></p>
+              <p class="timestamp">Last Reviewed: <span id="last-reviewed"></span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal" hidden>
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Settings</h3>
+          <button id="close-settings" class="btn btn-icon">✕</button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="setting-group">
+            <label for="api-key-input">OpenAI API Key</label>
+            <input 
+              type="password" 
+              id="api-key-input" 
+              class="input" 
+              placeholder="sk-..."
+              autocomplete="off"
+            />
+            <p class="help-text">Required for AI tag generation. Stored locally only.</p>
+          </div>
+
+          <div class="setting-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="private-mode" />
+              Private Mode (Disable AI)
+            </label>
+            <p class="help-text">Skip AI tag generation completely for privacy.</p>
+          </div>
+
+          <div class="setting-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="review-enabled" checked />
+              Enable Review System
+            </label>
+            <p class="help-text">Show spaced repetition review suggestions.</p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="save-settings" class="btn btn-primary">Save</button>
+          <button id="cancel-settings" class="btn btn-secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Screen -->
+  <div id="loading" class="loading" hidden>
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p>Loading Brain...</p>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container" class="toast-container">
+    <!-- Toast messages will be populated here -->
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="/src/js/app.js"></script>
+</body>
+</html>

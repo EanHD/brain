@@ -1,0 +1,96 @@
+openapi: 3.0.3
+info:
+  title: AI Tag Suggestion Service Contract
+  description: OpenAI API integration for generating note tags and summaries
+  version: 1.0.0
+
+servers:
+  - url: https://api.openai.com/v1
+    description: OpenAI API Server
+
+paths:
+  /chat/completions:
+    post:
+      summary: Generate tags and summary for note content
+      operationId: generateTags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagRequest'
+      responses:
+        '200':
+          description: Successful tag generation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParsedTagResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized - invalid API key
+        '429':
+          description: Rate limit exceeded
+        '500':
+          description: Server error
+
+components:
+  schemas:
+    TagRequest:
+      type: object
+      required:
+        - model
+        - messages
+        - max_tokens
+        - temperature
+      properties:
+        model:
+          type: string
+          enum: ["gpt-4o-mini"]
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        max_tokens:
+          type: integer
+          minimum: 50
+          maximum: 200
+        temperature:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+
+    Message:
+      type: object
+      required:
+        - role
+        - content
+      properties:
+        role:
+          type: string
+          enum: ["system", "user"]
+        content:
+          type: string
+          minLength: 1
+          maxLength: 4000
+
+    ParsedTagResponse:
+      type: object
+      required:
+        - tags
+        - summary
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+            pattern: '^[a-z][a-z0-9_]*[a-z0-9]$'
+          maxItems: 5
+          minItems: 0
+          description: Generated tags in lowercase_snake_case format
+        summary:
+          type: string
+          maxLength: 140
+          minLength: 10
+          description: Brief summary of note content

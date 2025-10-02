@@ -1,0 +1,324 @@
+openapi: 3.0.3
+info:
+  title: Storage Service Contract  
+  description: IndexedDB operations for notes, tags, and application data
+  version: 1.0.0
+
+paths:
+  /notes:
+    get:
+      summary: Search and retrieve notes
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+          description: Full-text search query
+        - name: tags
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          description: Filter by tags (AND operation)
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Notes retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotesResponse'
+
+    post:
+      summary: Create new note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNoteRequest'
+      responses:
+        '201':
+          description: Note created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+
+  /notes/{noteId}:
+    get:
+      summary: Get specific note by ID
+      parameters:
+        - name: noteId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+      responses:
+        '200':
+          description: Note retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+        '404':
+          description: Note not found
+
+    put:
+      summary: Update existing note
+      parameters:
+        - name: noteId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateNoteRequest'
+      responses:
+        '200':
+          description: Note updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+        '404':
+          description: Note not found
+
+    delete:
+      summary: Delete note
+      parameters:
+        - name: noteId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+      responses:
+        '204':
+          description: Note deleted successfully
+        '404':
+          description: Note not found
+
+  /tags:
+    get:
+      summary: Get all tags with statistics
+      parameters:
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: ["frequency", "alphabetical", "recent"]
+            default: "frequency"
+      responses:
+        '200':
+          description: Tags retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagsResponse'
+
+  /review:
+    get:
+      summary: Get notes due for review
+      parameters:
+        - name: intervals
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+            default: [7, 14, 30]
+          description: Review intervals in days
+      responses:
+        '200':
+          description: Review notes retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewResponse'
+
+  /review/{noteId}:
+    post:
+      summary: Mark note as reviewed
+      parameters:
+        - name: noteId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+      responses:
+        '200':
+          description: Note marked as reviewed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+
+components:
+  schemas:
+    Note:
+      type: object
+      required:
+        - id
+        - title
+        - body
+        - tags
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+          description: ULID identifier
+        title:
+          type: string
+          maxLength: 200
+          description: Auto-extracted from first line
+        body:
+          type: string
+          minLength: 1
+          maxLength: 50000
+          description: Full note content
+        tags:
+          type: array
+          items:
+            type: string
+            pattern: '^[a-z][a-z0-9_]*[a-z0-9]$'
+          maxItems: 10
+          description: Note tags in lowercase_snake_case
+        created_at:
+          type: string
+          format: date-time
+          description: ISO8601 creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: ISO8601 last update timestamp
+        last_reviewed:
+          type: string
+          format: date-time
+          nullable: true
+          description: ISO8601 last review timestamp
+
+    CreateNoteRequest:
+      type: object
+      required:
+        - body
+      properties:
+        body:
+          type: string
+          minLength: 1
+          maxLength: 50000
+        tags:
+          type: array
+          items:
+            type: string
+            pattern: '^[a-z][a-z0-9_]*[a-z0-9]$'
+          maxItems: 10
+          default: []
+
+    UpdateNoteRequest:
+      type: object
+      properties:
+        body:
+          type: string
+          minLength: 1
+          maxLength: 50000
+        tags:
+          type: array
+          items:
+            type: string
+            pattern: '^[a-z][a-z0-9_]*[a-z0-9]$'
+          maxItems: 10
+
+    NotesResponse:
+      type: object
+      required:
+        - notes
+        - total
+        - hasMore
+      properties:
+        notes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
+        total:
+          type: integer
+          description: Total number of matching notes
+        hasMore:
+          type: boolean
+          description: Whether more results are available
+        nextOffset:
+          type: integer
+          description: Offset for next page
+
+    TagIndex:
+      type: object
+      required:
+        - tag
+        - count
+        - first_used
+        - last_used
+      properties:
+        tag:
+          type: string
+          pattern: '^[a-z][a-z0-9_]*[a-z0-9]$'
+        count:
+          type: integer
+          minimum: 0
+        first_used:
+          type: string
+          format: date-time
+        last_used:
+          type: string
+          format: date-time
+
+    TagsResponse:
+      type: object
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagIndex'
+
+    ReviewResponse:
+      type: object
+      required:
+        - dueForReview
+        - flashbackNotes
+      properties:
+        dueForReview:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
+        flashbackNotes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
+        weakSpotTags:
+          type: array
+          items:
+            type: string
+          description: Tags rarely reviewed

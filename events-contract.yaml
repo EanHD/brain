@@ -1,0 +1,500 @@
+openapi: 3.0.3
+info:
+  title: Application Events Contract
+  description: Event system for loose coupling between application components
+  version: 1.0.0
+
+components:
+  schemas:
+    # Base Event Structure
+    BaseEvent:
+      type: object
+      required:
+        - type
+        - timestamp
+        - id
+      properties:
+        type:
+          type: string
+          description: Event type identifier
+        timestamp:
+          type: string
+          format: date-time
+          description: ISO8601 event timestamp
+        id:
+          type: string
+          pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+          description: Unique event ID (ULID)
+
+    # Note Events
+    NoteCreatedEvent:
+      allOf:
+        - $ref: '#/components/schemas/BaseEvent'
+        - type: object
+          required:
+            - data
+          properties:
+            type:
+              type: string
+              enum: ["NOTE_CREATED"]
+            data:
+              type: object
+              required:
+                - noteId
+                - note
+              properties:
+                noteId:
+                  type: string
+                  pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+                note:
+                  $ref: '#/components/schemas/Note'
+
+    NoteUpdatedEvent:
+      allOf:
+        - $ref: '#/components/schemas/BaseEvent'
+        - type: object
+          required:
+            - data
+          properties:
+            type:
+              type: string
+              enum: ["NOTE_UPDATED"]
+            data:
+              type: object
+              required:
+                - noteId
+                - changes
+                - previousVersion
+              properties:
+                noteId:
+                  type: string
+                  pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+                changes:
+                  type: object
+                  description: Fields that were changed
+                previousVersion:
+                  $ref: '#/components/schemas/Note'
+
+    NoteDeletedEvent:
+      allOf:
+        - $ref: '#/components/schemas/BaseEvent'
+        - type: object
+          required:
+            - data
+          properties:
+            type:
+              type: string
+              enum: ["NOTE_DELETED"]
+            data:
+              type: object
+              required:
+                - noteId
+                - deletedNote
+              properties:
+                noteId:
+                  type: string
+                  pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+                deletedNote:
+                  $ref: '#/components/schemas/Note'
+
+    # AI Events
+    AITagsAppliedEvent:
+      allOf:
+        - $ref: '#/components/schemas/BaseEvent'
+        - type: object
+          required:
+            - data
+          properties:
+            type:
+              type: string
+              enum: ["AI_TAGS_APPLIED"]
+            data:
+              type: object
+              required:
+                - noteId
+                - appliedTags
+                - summary
+              properties:
+                noteId:
+                  type: string
+                  pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+                appliedTags:
+                  type: array
+                  items:
+                    type: string
+                    pattern: '^[a-z][a-z0-9_]*[a-z0-9]$'
+                summary:
+                  type: string
+                  maxLength: 140
+                requestId:
+                  type: string
+                  description: AI request tracking ID
+
+    AITagsRequestedEvent:
+      allOf:
+        - $ref: '#/components/schemas/BaseEvent'
+        - type: object
+          required:
+            - data
+          properties:
+            type:
+              type: string
+              enum: ["AI_TAGS_REQUESTED"]
+            data:
+              type: object
+              required:
+                - noteId
+                - requestId
+              properties:
+                noteId:
+                  type: string
+                  pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+                requestId:
+                  type: string
+                  description: AI request tracking ID
+                isRetry:
+                  type: boolean
+                  default: false
+
+    AIRequestFailedEvent:
+      allOf:
+        - $ref: '#/components/schemas/BaseEvent'
+        - type: object
+          required:
+            - data
+          properties:
+            type:
+              type: string
+              enum: ["AI_REQUEST_FAILED"]
+            data:
+              type: object
+              required:
+                - noteId
+                - requestId
+                - error
+              properties:
+                noteId:
+                  type: string
+                  pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+                requestId:
+                  type: string
+                error:
+                  type: object
+                  required:
+                    - message
+                    - code
+                  properties:
+                    message:
+                      type: string
+                    code:
+                      type: string
+                    retryable:
+                      type: boolean
+
+    # Filter and Search Events
+    FilterChangedEvent:
+      allOf:
+        - $ref: '#/components/schemas/BaseEvent'
+        - type: object
+          required:
+            - data
+          properties:
+            type:
+              type: string
+              enum: ["FILTER_CHANGED"]
+            data:
+              type: object
+              required:
+                - filterType
+                - filterValue
+              properties:
+                filterType:
+                  type: string
+                  enum: ["search", "tags", "date_range", "clear"]
+                filterValue:
+                  oneOf:
+                    - type: string # search query
+                    - type: array  # tag array
+                      items:
+                        type: string
+                    - type: object # date range
+                      properties:
+                        start:
+                          type: string
+                          format: date-time
+                        end:
+                          type: string
+                          format: date-time
+                previousFilter:
+                  type: object
+                  description: Previous filter state
+
+    SearchExecutedEvent:
+      allOf:
+        - $ref: '#/components/schemas/BaseEvent'
+        - type: object
+          required:
+            - data
+          properties:
+            type:
+              type: string
+              enum: ["SEARCH_EXECUTED"]
+            data:
+              type: object
+              required:
+                - query
+                - resultCount
+                - executionTime
+              properties:
+                query:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                resultCount:
+                  type: integer
+                  minimum: 0
+                executionTime:
+                  type: number
+                  description: Search execution time in milliseconds
+
+    # View and Navigation Events
+    ViewChangedEvent:
+      allOf:
+        - $ref: '#/components/schemas/BaseEvent'
+        - type: object
+          required:
+            - data
+          properties:
+            type:
+              type: string
+              enum: ["VIEW_CHANGED"]
+            data:
+              type: object
+              required:
+                - fromView
+                - toView
+              properties:
+                fromView:
+                  type: string
+                  enum: ["today", "library", "toc", "detail", "review"]
+                toView:
+                  type: string
+                  enum: ["today", "library", "toc", "detail", "review"]
+                context:
+                  type: object
+                  description: Navigation context (e.g., selected note ID)
+
+    # Performance Events
+    PerformanceMeasuredEvent:
+      allOf:
+        - $ref: '#/components/schemas/BaseEvent'
+        - type: object
+          required:
+            - data
+          properties:
+            type:
+              type: string
+              enum: ["PERFORMANCE_MEASURED"]
+            data:
+              type: object
+              required:
+                - operation
+                - duration
+              properties:
+                operation:
+                  type: string
+                  enum: ["note_save", "library_render", "search_execute", "db_query"]
+                duration:
+                  type: number
+                  description: Operation duration in milliseconds
+                metadata:
+                  type: object
+                  description: Additional performance context
+                budgetExceeded:
+                  type: boolean
+                  description: Whether operation exceeded performance budget
+
+    # Review System Events
+    ReviewDueEvent:
+      allOf:
+        - $ref: '#/components/schemas/BaseEvent'
+        - type: object
+          required:
+            - data
+          properties:
+            type:
+              type: string
+              enum: ["REVIEW_DUE"]
+            data:
+              type: object
+              required:
+                - noteCount
+                - intervals
+              properties:
+                noteCount:
+                  type: integer
+                  minimum: 0
+                intervals:
+                  type: array
+                  items:
+                    type: integer
+                  description: Review intervals that triggered
+
+    NoteReviewedEvent:
+      allOf:
+        - $ref: '#/components/schemas/BaseEvent'
+        - type: object
+          required:
+            - data
+          properties:
+            type:
+              type: string
+              enum: ["NOTE_REVIEWED"]
+            data:
+              type: object
+              required:
+                - noteId
+                - reviewType
+              properties:
+                noteId:
+                  type: string
+                  pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+                reviewType:
+                  type: string
+                  enum: ["manual", "spaced_repetition", "flashback"]
+                previousReview:
+                  type: string
+                  format: date-time
+                  nullable: true
+
+    # Error Events  
+    ErrorEvent:
+      allOf:
+        - $ref: '#/components/schemas/BaseEvent'
+        - type: object
+          required:
+            - data
+          properties:
+            type:
+              type: string
+              enum: ["ERROR"]
+            data:
+              type: object
+              required:
+                - error
+                - context
+              properties:
+                error:
+                  type: object
+                  required:
+                    - message
+                    - code
+                  properties:
+                    message:
+                      type: string
+                    code:
+                      type: string
+                    stack:
+                      type: string
+                context:
+                  type: object
+                  description: Context where error occurred
+                recoverable:
+                  type: boolean
+                  default: true
+
+    # Supporting Schemas
+    Note:
+      type: object
+      required:
+        - id
+        - title
+        - body
+        - tags
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          pattern: '^[0-9A-HJKMNP-TV-Z]{26}$'
+        title:
+          type: string
+          maxLength: 200
+        body:
+          type: string
+          minLength: 1
+          maxLength: 50000
+        tags:
+          type: array
+          items:
+            type: string
+            pattern: '^[a-z][a-z0-9_]*[a-z0-9]$'
+          maxItems: 10
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        last_reviewed:
+          type: string
+          format: date-time
+          nullable: true
+
+# Event System API (Internal)
+paths:
+  /events:
+    post:
+      summary: Emit application event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/NoteCreatedEvent'
+                - $ref: '#/components/schemas/NoteUpdatedEvent'
+                - $ref: '#/components/schemas/NoteDeletedEvent'
+                - $ref: '#/components/schemas/AITagsAppliedEvent'
+                - $ref: '#/components/schemas/FilterChangedEvent'
+                - $ref: '#/components/schemas/ViewChangedEvent'
+                - $ref: '#/components/schemas/PerformanceMeasuredEvent'
+                - $ref: '#/components/schemas/ErrorEvent'
+      responses:
+        '200':
+          description: Event processed successfully
+
+  /events/subscribe:
+    post:
+      summary: Subscribe to event types
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - eventTypes
+                - handler
+              properties:
+                eventTypes:
+                  type: array
+                  items:
+                    type: string
+                    enum: 
+                      - "NOTE_CREATED"
+                      - "NOTE_UPDATED" 
+                      - "NOTE_DELETED"
+                      - "AI_TAGS_APPLIED"
+                      - "FILTER_CHANGED"
+                      - "VIEW_CHANGED"
+                      - "PERFORMANCE_MEASURED"
+                      - "ERROR"
+                handler:
+                  type: string
+                  description: Handler function identifier
+      responses:
+        '200':
+          description: Subscription created successfully
