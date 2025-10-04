@@ -38,6 +38,12 @@ Thumbs.db
 /blob-report/
 /playwright/.cache/
 coverage/
+*.test-results.json
+
+# Development artifacts
+.opencode/
+.specify/
+REPO_ORGANIZATION.md
 
 # PWA and service worker
 sw.js.map

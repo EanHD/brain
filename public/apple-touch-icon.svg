@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="180" height="180" role="img" aria-labelledby="title desc">
+  <title id="title">Brain Notebook Apple Touch Icon</title>
+  <desc id="desc">Rounded gradient square with stylized letter B</desc>
+  <defs>
+    <linearGradient id="brain-apple-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#111827" />
+      <stop offset="50%" stop-color="#1e40af" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+  <rect x="28" y="28" width="456" height="456" rx="120" fill="url(#brain-apple-gradient)" />
+  <path d="M206 142h100c54 0 94 36 94 88c0 34-14 59-42 74c34 14 57 42 57 80c0 57-44 100-110 100H206V142Zm90 142c30 0 48-15 48-40c0-25-18-40-48-40h-44v80h44Zm5 152c36 0 58-19 58-48c0-29-22-48-58-48h-49v96h49Z" fill="#f8fafc" />
+  <circle cx="176" cy="204" r="20" fill="#bae6fd" opacity="0.7" />
+  <circle cx="352" cy="332" r="18" fill="#0ea5e9" opacity="0.5" />
+</svg>

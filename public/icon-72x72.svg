@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="72" height="72" role="img" aria-labelledby="title desc">
+  <title id="title">Brain Notebook Icon 72</title>
+  <desc id="desc">Rounded gradient square with the letter B</desc>
+  <defs>
+    <linearGradient id="brain-gradient-72" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1f2937" />
+      <stop offset="50%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+  <rect x="32" y="32" width="448" height="448" rx="120" fill="url(#brain-gradient-72)" />
+  <path d="M210 150h90c46 0 82 32 82 78c0 32-14 54-41 66c32 12 53 38 53 74c0 53-40 94-100 94h-84V150Zm80 126c26 0 42-13 42-35c0-21-16-35-42-35h-36v70h36Zm4 134c32 0 52-17 52-44c0-27-20-44-52-44h-40v88h40Z" fill="#f8fafc" />
+</svg>

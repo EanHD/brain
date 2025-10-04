@@ -3,14 +3,46 @@
 ## Overview
 Brain is a Progressive Web Application (PWA) for capturing and organizing notes with AI-powered tagging, multiple view modes, local-first storage, and spaced repetition review. Built with vanilla JavaScript for simplicity, learning, and maintainability.
 
-## Quick Start
+## 🚀 Quick Deploy to GitHub Pages
+
+**NEW**: Ready-to-deploy setup! Get your Brain PWA online in 5 minutes.
+
+### ⚡ Ultra-Quick Deploy
+
+```bash
+# 1. Create GitHub Actions workflows
+python3 create-workflows.py
+
+# 2. Test build
+npm install && npm run build
+
+# 3. Push to GitHub
+git add . && git commit -m "Deploy Brain PWA" && git push origin main
+
+# 4. Enable GitHub Pages
+# Go to: https://github.com/EanHD/brain/settings/pages
+# Set Source to: GitHub Actions
+
+# 5. Access your app!
+# https://eanhd.github.io/brain/
+```
+
+**📖 Detailed Guide**: See [START_HERE.md](START_HERE.md) for complete instructions.
+
+### 📱 Install on Your Devices
+
+Once deployed, install as a PWA:
+- **Mobile**: Open in browser → "Add to Home Screen"
+- **Desktop**: Click install icon in address bar
+
+## Quick Start (Local Development)
 
 ### Prerequisites
 - Node.js 18+ 
 - Modern browser (Chrome 90+, Firefox 88+, Safari 14+)
 - OpenAI API key (optional, for AI features)
 
-### Installation
+### Local Installation
 ```bash
 # Clone the repository
 git clone https://github.com/EanHD/brain.git
@@ -61,15 +93,35 @@ Built following constitutional principles:
 ## Project Structure
 ```
 brain/
-├── index.html              # PWA entry point
-├── manifest.json           # PWA manifest
-├── package.json           # Dependencies and scripts
-├── vite.config.js         # Build configuration
-├── src/                   # Source code
-├── tests/                 # Test suites
-├── docs/                  # Documentation
-├── .github/workflows/     # CI/CD pipelines
-└── dist/                  # Build output
+├── .spec/                          # Specification Kit
+│   ├── 001-self-organizing-notebook/  # Feature specifications
+│   └── contracts/                     # API contracts
+│
+├── src/                            # Application Source
+│   ├── js/                            # JavaScript modules
+│   │   ├── app.js                     # Application controller
+│   │   ├── db.js                      # Database layer
+│   │   ├── ai.js                      # AI service
+│   │   ├── state.js                   # State management
+│   │   └── views/                     # View controllers
+│   └── css/                           # Stylesheets
+│
+├── tests/                          # Test Suites
+│   ├── unit/                          # Unit tests
+│   └── e2e/                           # End-to-end tests
+│
+├── docs/                           # Documentation
+│   ├── README.md                      # User guide
+│   ├── DEVELOPMENT.md                 # Developer guide
+│   ├── DEPLOYMENT.md                  # Deployment guide
+│   └── API.md                         # API documentation
+│
+├── index.html                      # PWA entry point
+├── manifest.json                   # PWA manifest
+├── sw.js                          # Service worker
+├── package.json                    # Dependencies
+├── vite.config.js                 # Build configuration
+└── README.md                      # This file
 ```
 
 ## Development Status

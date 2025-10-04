@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <!-- PWA Meta Tags -->
   <meta name="theme-color" content="#1a1a1a" />
@@ -12,53 +12,130 @@
   <link rel="manifest" href="/manifest.json" />
   
   <!-- Icons -->
-  <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg" />
-  <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
   
   <!-- Styles -->
   <link rel="stylesheet" href="/src/css/main.css" />
   <link rel="stylesheet" href="/src/css/components.css" />
+  <link rel="stylesheet" href="/src/css/animations.css" />
   <link rel="stylesheet" href="/src/css/responsive.css" />
   
   <title>Brain - Self-Organizing Notebook</title>
 </head>
-<body>
-  <!-- PWA Installation Banner (hidden by default) -->
-  <div id="install-banner" class="install-banner" hidden>
-    <div class="install-banner-content">
-      <p>Install Brain for the best experience</p>
-      <button id="install-button" class="btn btn-primary">Install</button>
-      <button id="dismiss-install" class="btn btn-secondary">Maybe Later</button>
-    </div>
-  </div>
-
-  <!-- Main Application Container -->
-  <div id="app" class="app">
-    <!-- Navigation Header -->
-    <header class="header">
-      <nav class="nav">
-        <div class="nav-brand">
-          <h1 class="brand-title">Brain</h1>
+  <body>
+    <!-- App Container -->
+    <div id="app" role="main" aria-label="Brain Note Application">
+    <!-- Top App Bar (Desktop & Tablet) -->
+    <header class="app-bar" id="app-bar">
+      <div class="app-bar-brand">
+        <button id="menu-toggle" class="btn-icon" aria-label="Toggle menu">
+          <span class="icon">☰</span>
+        </button>
+        <h1 class="brand-title">🧠 Brain</h1>
+      </div>
+      <div class="app-bar-title" id="app-bar-title">
+        <!-- Dynamic title based on current view -->
+      </div>
+      <div class="app-bar-actions">
+        <button id="search-toggle" class="btn-icon" aria-label="Search" title="Search">
+          <span class="icon">🔍</span>
+        </button>
+        <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme" title="Toggle theme">
+          <span class="icon">🌙</span>
+        </button>
+        <button id="settings-btn" class="btn-icon" aria-label="Settings" title="Settings">
+          <span class="icon">⚙️</span>
+        </button>
+        <div id="connection-status" class="connection-status online" title="Online">
+          <span class="status-dot"></span>
         </div>
-        <div class="nav-menu">
-          <button id="nav-today" class="nav-item active" data-view="today">Today</button>
-          <button id="nav-library" class="nav-item" data-view="library">Library</button>
-          <button id="nav-toc" class="nav-item" data-view="toc">TOC</button>
-          <button id="nav-review" class="nav-item" data-view="review">Review</button>
-        </div>
-        <div class="nav-actions">
-          <button id="settings-btn" class="btn btn-icon" title="Settings">
-            <span class="icon">⚙️</span>
-          </button>
-          <div id="connection-status" class="connection-status online" title="Online">
-            <span class="status-dot"></span>
-          </div>
-        </div>
-      </nav>
+      </div>
     </header>
 
+    <!-- Side Navigation (Desktop) -->
+          <!-- Side Navigation -->
+      <nav class="sidenav" aria-label="Main navigation">
+      <div class="side-nav-header">
+        <h2>Brain</h2>
+      </div>
+      <div class="side-nav-body">
+        <ul class="nav-menu">
+          <li>
+            <button id="nav-home" class="nav-item active" data-view="home">
+              <span class="nav-icon">🏠</span>
+              <span class="nav-label">Home</span>
+            </button>
+          </li>
+          <li>
+            <button id="nav-today" class="nav-item" data-view="today">
+              <span class="nav-icon">📝</span>
+              <span class="nav-label">Today</span>
+            </button>
+          </li>
+          <li>
+            <button id="nav-library" class="nav-item" data-view="library">
+              <span class="nav-icon">📚</span>
+              <span class="nav-label">Library</span>
+            </button>
+          </li>
+          <li>
+            <button id="nav-toc" class="nav-item" data-view="toc">
+              <span class="nav-icon">🏷️</span>
+              <span class="nav-label">Tags</span>
+            </button>
+          </li>
+          <li>
+            <button id="nav-files" class="nav-item" data-view="files">
+              <span class="nav-icon">📂</span>
+              <span class="nav-label">Files</span>
+            </button>
+          </li>
+          <li>
+            <button id="nav-review" class="nav-item" data-view="review">
+              <span class="nav-icon">🔄</span>
+              <span class="nav-label">Review</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div class="side-nav-footer">
+        <div class="nav-user-info">
+          <span class="text-sm text-secondary">Local-first storage</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="bottom-nav" id="bottom-nav">
+      <button class="bottom-nav-item active" data-view="home">
+        <span class="bottom-nav-icon">🏠</span>
+        <span>Home</span>
+      </button>
+      <button class="bottom-nav-item" data-view="today">
+        <span class="bottom-nav-icon">📝</span>
+        <span>Today</span>
+      </button>
+      <button class="bottom-nav-item" data-view="library">
+        <span class="bottom-nav-icon">📚</span>
+        <span>Library</span>
+      </button>
+      <button class="bottom-nav-item" data-view="toc">
+        <span class="bottom-nav-icon">🏷️</span>
+        <span>Tags</span>
+      </button>
+      <button class="bottom-nav-item" data-view="files">
+        <span class="bottom-nav-icon">📂</span>
+        <span>Files</span>
+      </button>
+      <button class="bottom-nav-item" data-view="review">
+        <span class="bottom-nav-icon">🔄</span>
+        <span>Review</span>
+      </button>
+    </nav>
+
     <!-- Main Content Area -->
-    <main class="main">
+    <main class="main-content" id="main-content">
       <!-- Today View -->
       <section id="today-view" class="view active">
         <div class="view-header">
@@ -71,13 +148,20 @@
           <textarea 
             id="note-input" 
             class="note-input" 
-            placeholder="What's on your mind?"
-            rows="3"
+            placeholder="What's on your mind? (Ctrl+Enter to save)"
             data-testid="note-input"
           ></textarea>
-          <div class="input-actions">
-            <button id="save-note" class="btn btn-primary" data-testid="save-button">Save</button>
-            <button id="clear-input" class="btn btn-secondary">Clear</button>
+          
+          <div class="note-input-footer">
+            <div class="note-input-stats">
+              <span id="char-count" class="text-muted">0 characters</span>
+            </div>
+            <div class="input-actions">
+              <button id="clear-input" class="btn btn-text" style="display: none;">Clear</button>
+              <button id="save-note" class="btn btn-primary" disabled data-testid="save-button">
+                💾 Save Note
+              </button>
+            </div>
           </div>
         </div>
 
@@ -92,7 +176,7 @@
         <!-- Recent Notes -->
         <div class="recent-notes">
           <h3>Recent Notes</h3>
-          <div id="today-notes" class="notes-list" data-testid="today-notes">
+          <div id="today-notes" class="note-grid note-grid-grid" data-testid="today-notes">
             <!-- Recent notes will be populated here -->
           </div>
         </div>
@@ -101,17 +185,34 @@
       <!-- Library View -->
       <section id="library-view" class="view">
         <div class="view-header">
-          <h2>Library</h2>
-          <div class="search-container">
-            <input 
-              type="search" 
-              id="search-input" 
-              class="search-input" 
-              placeholder="Search notes..."
-              data-testid="search-input"
-            />
-            <button id="clear-search" class="btn btn-icon">✕</button>
+          <div class="view-header-title">
+            <h2>Library</h2>
           </div>
+          <div class="view-header-actions">
+            <div class="layout-switcher">
+              <button id="layout-masonry" class="btn-icon" title="Masonry Layout" aria-label="Masonry Layout">
+                <span>⊞</span>
+              </button>
+              <button id="layout-grid" class="btn-icon active" title="Grid Layout" aria-label="Grid Layout">
+                <span>▦</span>
+              </button>
+              <button id="layout-list" class="btn-icon" title="List Layout" aria-label="List Layout">
+                <span>☰</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-container">
+          <input 
+            type="search" 
+            id="search-input" 
+            class="search-input" 
+            placeholder="Search notes..."
+            data-testid="search-input"
+          />
+          <button id="clear-search" class="btn btn-icon">✕</button>
         </div>
 
         <!-- Filters -->
@@ -124,8 +225,8 @@
           </div>
         </div>
 
-        <!-- Notes List -->
-        <div id="library-notes" class="notes-list" data-testid="library-notes">
+        <!-- Notes Grid -->
+        <div id="library-notes" class="note-grid note-grid-grid" data-testid="library-notes">
           <!-- Filtered notes will be populated here -->
         </div>
 
@@ -150,6 +251,11 @@
       </section>
 
       <!-- Review View -->
+      <!-- Files View -->
+      <section id="files-view" class="view">
+        <!-- Files content will be rendered by files.js -->
+      </section>
+
       <section id="review-view" class="view">
         <div class="view-header">
           <h2>Review</h2>
@@ -176,6 +282,20 @@
             <h3>Weak Spots</h3>
             <div id="review-weakspots" class="weak-spots">
               <!-- Underutilized tags will be populated here -->
+            </div>
+          </section>
+
+          <section class="review-section">
+            <h3>Review Stats</h3>
+            <div id="review-stats" class="review-stats">
+              <!-- Review statistics will be populated here -->
+            </div>
+          </section>
+
+          <section class="review-section">
+            <h3>Study Sessions</h3>
+            <div id="study-sessions" class="study-sessions">
+              <!-- Study sessions timeline will be populated here -->
             </div>
           </section>
         </div>
@@ -251,6 +371,55 @@
             </label>
             <p class="help-text">Show spaced repetition review suggestions.</p>
           </div>
+
+          <div class="setting-group">
+            <label for="theme-select">Theme</label>
+            <select id="theme-select" class="input">
+              <option value="auto">Auto (Follow System)</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+            <p class="help-text">Choose your preferred color theme.</p>
+          </div>
+
+          <div class="setting-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="theme-schedule-enabled" />
+              Enable Scheduled Theme Switching
+            </label>
+            <div id="theme-schedule-options" style="display: none; margin-top: var(--space-3); padding-left: var(--space-6);">
+              <div style="display: flex; gap: var(--space-4); align-items: center; margin-bottom: var(--space-2);">
+                <label for="dark-start-time" style="flex: 0 0 auto;">Dark mode starts at:</label>
+                <input type="time" id="dark-start-time" class="input" value="20:00" style="flex: 1;">
+              </div>
+              <div style="display: flex; gap: var(--space-4); align-items: center;">
+                <label for="light-start-time" style="flex: 0 0 auto;">Light mode starts at:</label>
+                <input type="time" id="light-start-time" class="input" value="07:00" style="flex: 1;">
+              </div>
+            </div>
+            <p class="help-text">Automatically switch theme based on time of day.</p>
+          </div>
+
+          <div class="setting-group">
+            <label>Export & Backup</label>
+            <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-2);">
+              <button id="export-markdown-btn" class="btn btn-secondary">📄 Export Markdown</button>
+              <button id="export-json-btn" class="btn btn-secondary">📦 Export JSON</button>
+              <button id="export-html-btn" class="btn btn-secondary">🌐 Export HTML</button>
+              <button id="backup-btn" class="btn btn-secondary">💾 Create Backup</button>
+              <button id="import-backup-btn" class="btn btn-secondary">📥 Import Backup</button>
+            </div>
+            <input type="file" id="backup-file-input" accept=".json,.bak" style="display: none;">
+            <p class="help-text">Export your notes or create a backup of all data.</p>
+          </div>
+
+          <div class="setting-group">
+            <label>Help & Onboarding</label>
+            <div style="display: flex; gap: var(--space-2); margin-top: var(--space-2);">
+              <button id="restart-onboarding-btn" class="btn btn-secondary">🎓 Restart Tutorial</button>
+            </div>
+            <p class="help-text">Restart the interactive tutorial to learn Brain's features.</p>
+          </div>
         </div>
 
         <div class="modal-footer">
@@ -262,10 +431,10 @@
   </div>
 
   <!-- Loading Screen -->
-  <div id="loading" class="loading" hidden>
+  <div id="loading" class="loading" hidden aria-hidden="true">
     <div class="loading-content">
       <div class="spinner"></div>
-      <p>Loading Brain...</p>
+      <p data-role="loading-message">Loading Brain...</p>
     </div>
   </div>
 

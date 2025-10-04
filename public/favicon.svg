@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="64" height="64">
+  <defs>
+    <linearGradient id="brain-favicon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1f2937" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="112" height="112" rx="32" fill="url(#brain-favicon-gradient)" />
+  <path d="M54 34h26c15 0 27 10 27 24c0 10-5 17-13 20c10 4 17 12 17 24c0 18-13 30-32 30H54V34Zm25 41c9 0 14-5 14-11c0-7-5-11-14-11H62v22h17Zm1 43c11 0 18-6 18-15c0-9-7-15-18-15H62v30h18Z" fill="#f8fafc" />
+</svg>

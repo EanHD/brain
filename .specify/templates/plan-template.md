@@ -47,7 +47,19 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+**Data Quality Gates** (based on Vehicle Data Generation Constitution):
+- [ ] **Schema Compliance**: All output structures validate against JSON Schema
+- [ ] **Provenance Tracking**: Confidence scores and method tracking implemented  
+- [ ] **Truth Over Speculation**: Uncertainty handling with null values and low confidence scores
+- [ ] **Scope Boundaries**: Generation-level abstraction maintained (no VIN/trim drift)
+- [ ] **Batch Processing**: Regional batching with size limits (max 5 models per batch)
+- [ ] **Factual Humility**: Conservative approach to unknown technical details
+- [ ] **Downstream Alignment**: Focus on repair-relevant attributes only
+
+**Quality Thresholds**:
+- Core fields (years, body, drivetrains) must have confidence ≥0.3
+- Schema validation must pass before emission
+- Conservative defaults for complexity ratings
 
 ## Project Structure
 

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force Database Reset - Brain PWA</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        #status.success {
+            background: #c8e6c9;
+            color: #2e7d32;
+            display: block;
+        }
+        #status.error {
+            background: #ffcdd2;
+            color: #c62828;
+            display: block;
+        }
+        .actions {
+            margin-top: 30px;
+        }
+        pre {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Force Database Reset</h1>
+        
+        <div class="info">
+            <strong>This will:</strong><br>
+            1. Delete the entire IndexedDB database<br>
+            2. Clear localStorage settings<br>
+            3. Force a complete fresh start<br>
+            4. Automatically redirect to the app
+        </div>
+
+        <div class="actions">
+            <button onclick="forceReset()">🗑️ Force Complete Reset</button>
+        </div>
+
+        <div id="status"></div>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <h3>Or use Browser Console:</h3>
+            <pre>await indexedDB.deleteDatabase('brain-notebook');
+localStorage.clear();
+location.reload();</pre>
+        </div>
+    </div>
+
+    <script>
+        async function forceReset() {
+            const status = document.getElementById('status');
+            status.className = '';
+            status.style.display = 'block';
+            status.textContent = '🔄 Resetting database...';
+
+            try {
+                // Close any existing connections
+                const databases = await indexedDB.databases();
+                console.log('Existing databases:', databases);
+
+                // Delete the database
+                const deleteRequest = indexedDB.deleteDatabase('brain-notebook');
+                
+                await new Promise((resolve, reject) => {
+                    deleteRequest.onsuccess = () => {
+                        console.log('✅ Database deleted successfully');
+                        resolve();
+                    };
+                    
+                    deleteRequest.onerror = (event) => {
+                        console.error('❌ Delete failed:', event);
+                        reject(event.target.error);
+                    };
+                    
+                    deleteRequest.onblocked = () => {
+                        console.warn('⚠️ Delete blocked - close all tabs');
+                        status.className = 'error';
+                        status.textContent = '⚠️ Database deletion blocked. Close all other tabs with this app and try again.';
+                        reject(new Error('Blocked'));
+                    };
+                });
+
+                // Clear localStorage
+                localStorage.clear();
+                console.log('✅ LocalStorage cleared');
+
+                status.className = 'success';
+                status.textContent = '✅ Reset complete! Redirecting...';
+                
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Reset error:', error);
+                status.className = 'error';
+                status.textContent = '❌ Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

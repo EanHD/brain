@@ -3,6 +3,9 @@ import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // Base path for GitHub Pages deployment
+  base: process.env.NODE_ENV === 'production' ? '/brain/' : '/',
+  
   // Development server configuration
   server: {
     port: 3000,

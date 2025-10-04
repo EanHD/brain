@@ -1,0 +1,770 @@
+/**
+ * T044: Responsive Design - src/css/responsive.css
+ * 
+ * Mobile-first responsive design for Brain PWA
+ * Implements progressive enhancement with breakpoints and responsive components
+ * 
+ * Features:
+ * - Mobile-first approach (constitutional requirement)
+ * - Breakpoint-specific optimizations
+ * - Touch-friendly interface design
+ * - Performance-conscious responsive images and layouts
+ */
+
+/* =================================================================
+   Responsive Breakpoints
+   ================================================================= */
+
+:root {
+  /* Breakpoint values */
+  --breakpoint-sm: 640px;   /* Small tablets */
+  --breakpoint-md: 768px;   /* Tablets */
+  --breakpoint-lg: 1024px;  /* Small desktops */
+  --breakpoint-xl: 1280px;  /* Large desktops */
+  --breakpoint-2xl: 1536px; /* Extra large screens */
+  
+  /* Container sizes at breakpoints */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+}
+
+/* =================================================================
+   Base Mobile Styles (Default)
+   ================================================================= */
+
+/* Mobile-first: These styles apply to all screen sizes by default */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Top App Bar - Mobile */
+.app-bar {
+  height: var(--header-height);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  background-color: var(--color-surface-5dp);
+  border-bottom: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Side Navigation - Hidden on Mobile */
+.side-nav {
+  display: none;
+}
+
+/* Bottom Navigation - Visible on Mobile */
+.bottom-nav {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-nav-height);
+  background-color: var(--color-surface-5dp);
+  border-top: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-fixed);
+}
+
+/* Main Content - Mobile with Bottom Nav Padding */
+.main-content {
+  flex: 1;
+  padding: var(--space-4);
+  padding-bottom: calc(var(--bottom-nav-height) + var(--space-4));
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Navigation - Mobile Stack */
+.nav {
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+.nav-brand {
+  align-self: center;
+}
+
+.nav-menu {
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.nav-item {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-size: var(--font-size-xs);
+  padding: var(--space-2) var(--space-3);
+}
+
+.nav-actions {
+  justify-content: center;
+}
+
+/* Views - Mobile Layout */
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+  animation: fadeIn var(--transition-base) ease-out;
+}
+
+.view-header {
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
+
+.view-subtitle {
+  color: var(--color-text-secondary);
+  margin-top: var(--space-2);
+}
+
+/* Note Input - Mobile Optimized */
+.note-input-container {
+  margin-bottom: var(--space-6);
+}
+
+.note-input {
+  width: 100%;
+  min-height: 8rem;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  resize: none;
+  -webkit-appearance: none;
+}
+
+.input-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.input-actions .btn {
+  flex: 1;
+  justify-content: center;
+}
+
+/* Search - Mobile Optimized */
+.search-container {
+  margin-top: var(--space-4);
+}
+
+.search-input {
+  width: 100%;
+  font-size: var(--font-size-base);
+  padding: var(--space-4);
+}
+
+/* Filters - Mobile Stack */
+.filters {
+  margin-bottom: var(--space-6);
+}
+
+.tag-filters {
+  margin-bottom: var(--space-4);
+}
+
+.filter-actions {
+  text-align: center;
+}
+
+/* Notes List - Mobile Cards */
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.note-card {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  touch-action: manipulation; /* Optimize touch */
+}
+
+.note-card-title {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-2);
+}
+
+.note-card-preview {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  -webkit-line-clamp: 2; /* Limit on mobile */
+}
+
+/* TOC - Mobile Optimized */
+.toc-tags {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.toc-tag-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  touch-action: manipulation;
+}
+
+/* Modal - Mobile Full Screen */
+.modal {
+  padding: 0;
+}
+
+.modal-content {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  border-radius: 0;
+}
+
+.modal-body {
+  max-height: calc(100vh - 10rem);
+}
+
+/* Toast - Mobile Positioning */
+.toast-container {
+  position: fixed;
+  bottom: var(--space-4);
+  left: var(--space-4);
+  right: var(--space-4);
+  top: auto;
+  max-width: none;
+}
+
+/* =================================================================
+   Small Tablets (640px and up)
+   ================================================================= */
+
+@media (min-width: 640px) {
+  .main {
+    padding: var(--space-6);
+  }
+  
+  /* Navigation - Horizontal */
+  .nav {
+    flex-direction: row;
+    padding: var(--space-4);
+  }
+  
+  .nav-menu {
+    gap: var(--space-2);
+  }
+  
+  .nav-item {
+    flex: none;
+    font-size: var(--font-size-sm);
+    padding: var(--space-3) var(--space-4);
+  }
+  
+  /* Note Input - Larger */
+  .note-input {
+    font-size: var(--font-size-lg);
+  }
+  
+  /* Notes List - Two Columns */
+  .notes-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+  
+  /* Modal - Centered */
+  .modal {
+    padding: var(--space-4);
+  }
+  
+  .modal-content {
+    width: 100%;
+    height: auto;
+    max-width: 32rem;
+    max-height: 90vh;
+    border-radius: var(--radius-xl);
+  }
+  
+  /* Toast - Top Right */
+  .toast-container {
+    position: fixed;
+    top: var(--space-4);
+    right: var(--space-4);
+    bottom: auto;
+    left: auto;
+    max-width: 24rem;
+  }
+}
+
+/* =================================================================
+   Tablets (768px and up) - Nav Rail Layout
+   ================================================================= */
+
+@media (min-width: 768px) {
+  /* Layout: Nav Rail + Content */
+  .app {
+    display: grid;
+    grid-template-columns: var(--sidebar-collapsed) 1fr;
+    grid-template-rows: var(--header-height) 1fr;
+    grid-template-areas:
+      "rail header"
+      "rail main";
+  }
+  
+  .app-bar {
+    grid-area: header;
+  }
+  
+  /* Side Nav as Rail (Collapsed) */
+  .side-nav {
+    display: flex;
+    grid-area: rail;
+    width: var(--sidebar-collapsed);
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    background-color: var(--color-surface-4dp);
+    border-right: 1px solid var(--color-border-light);
+    flex-direction: column;
+    padding: var(--space-4) 0;
+    z-index: var(--z-fixed);
+  }
+  
+  .side-nav-header {
+    display: none; /* Hide text in rail mode */
+  }
+  
+  .side-nav-body {
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+  .side-nav .nav-menu {
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: 0 var(--space-2);
+  }
+  
+  .side-nav .nav-item {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3) var(--space-2);
+    font-size: var(--font-size-xs);
+    gap: var(--space-1);
+    border-radius: var(--radius-xl);
+  }
+  
+  .side-nav .nav-label {
+    font-size: var(--font-size-xs);
+  }
+  
+  /* Hide Bottom Nav on Tablet+ */
+  .bottom-nav {
+    display: none;
+  }
+  
+  /* Main Content */
+  .main-content {
+    grid-area: main;
+    padding: var(--space-8);
+    padding-bottom: var(--space-8);
+    margin-left: 0;
+  }
+  
+  /* View Header - Side by Side */
+  .view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+  }
+  
+  .search-container {
+    margin-top: 0;
+    width: 20rem;
+  }
+  
+  /* Note Input - Side Actions */
+  .input-actions {
+    justify-content: flex-end;
+  }
+  
+  .input-actions .btn {
+    flex: none;
+  }
+  
+  /* Filters - Horizontal */
+  .filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .filter-actions {
+    text-align: right;
+  }
+  
+  /* Note Card - More Preview */
+  .note-card-preview {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+  
+  /* TOC - Grid Layout */
+  .toc-tags {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+/* =================================================================
+   Small Desktops (1024px and up) - Full Side Nav
+   ================================================================= */
+
+@media (min-width: 1024px) {
+  /* Layout: Full Side Nav + Content */
+  .app {
+    grid-template-columns: var(--sidebar-width) 1fr;
+    grid-template-areas:
+      "sidebar header"
+      "sidebar main";
+  }
+  
+  /* Side Nav Expanded */
+  .side-nav {
+    width: var(--sidebar-width);
+    padding: 0;
+  }
+  
+  .side-nav-header {
+    display: block;
+    padding: var(--space-6) var(--space-4);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+  
+  .side-nav-header h2 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+  }
+  
+  .side-nav .nav-item {
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-full);
+  }
+  
+  .side-nav .nav-label {
+    font-size: var(--font-size-sm);
+    text-align: left;
+  }
+  
+  .side-nav-footer {
+    display: block;
+  }
+  
+  /* Main Content */
+  .main-content {
+    padding: var(--space-10);
+  }
+  
+  /* Notes List - Three Columns */
+  .notes-list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+  }
+  
+  /* TOC - Three Columns */
+  .toc-tags {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  /* Modal - Larger */
+  .modal-content {
+    max-width: 40rem;
+  }
+  
+  /* Note Detail - Two Column */
+  .note-detail {
+    display: grid;
+    grid-template-columns: 1fr 20rem;
+    gap: var(--space-8);
+  }
+  
+  .note-meta {
+    border-left: 1px solid var(--color-border);
+    padding-left: var(--space-8);
+  }
+}
+
+/* =================================================================
+   Large Desktops (1280px and up)
+   ================================================================= */
+
+@media (min-width: 1280px) {
+  .container {
+    padding: 0 var(--space-8);
+  }
+  
+  .main {
+    max-width: var(--container-xl);
+    margin: 0 auto;
+  }
+  
+  /* Navigation - Spacious */
+  .nav {
+    padding: var(--space-6) var(--space-8);
+  }
+  
+  /* Notes List - Four Columns */
+  .notes-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  /* TOC - Four Columns */
+  .toc-tags {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* =================================================================
+   Extra Large Screens (1536px and up)
+   ================================================================= */
+
+@media (min-width: 1536px) {
+  /* Notes List - Five Columns */
+  .notes-list {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  
+  /* TOC - Five Columns */
+  .toc-tags {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  
+  /* Increase font sizes for large screens */
+  .note-card-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .note-card-preview {
+    font-size: var(--font-size-base);
+  }
+}
+
+/* =================================================================
+   Touch Device Optimizations
+   ================================================================= */
+
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  .btn {
+    min-height: 2.75rem;
+    padding: var(--space-3) var(--space-5);
+  }
+  
+  .btn-icon {
+    width: 3rem;
+    height: 3rem;
+  }
+  
+  .nav-item {
+    min-height: 2.75rem;
+    padding: var(--space-3) var(--space-4);
+  }
+  
+  .note-card {
+    padding: var(--space-5);
+  }
+  
+  /* Remove hover effects */
+  .card:hover,
+  .note-card:hover,
+  .btn:hover,
+  .nav-item:hover,
+  .tag:hover {
+    transform: none;
+    box-shadow: inherit;
+  }
+  
+  /* Improve scroll performance */
+  .main,
+  .modal-body,
+  .notes-list {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+}
+
+/* =================================================================
+   High DPI / Retina Display Optimizations
+   ================================================================= */
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Crisp borders */
+  .card,
+  .note-card,
+  .btn,
+  .input,
+  .textarea {
+    border-width: 0.5px;
+  }
+  
+  /* Optimize text rendering */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* =================================================================
+   Landscape Phone Optimization
+   ================================================================= */
+
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .header {
+    position: relative; /* Don't stick on landscape phones */
+  }
+  
+  .nav {
+    padding: var(--space-2) var(--space-4);
+  }
+  
+  .nav-item {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+  
+  .main {
+    padding: var(--space-3);
+  }
+  
+  .view-header {
+    margin-bottom: var(--space-4);
+  }
+  
+  .note-input {
+    min-height: 6rem;
+  }
+}
+
+/* =================================================================
+   Print Styles (Responsive)
+   ================================================================= */
+
+@media print {
+  .nav,
+  .install-banner,
+  .toast-container,
+  .modal {
+    display: none !important;
+  }
+  
+  .main {
+    padding: 0;
+    max-width: none;
+  }
+  
+  .notes-list {
+    display: block;
+  }
+  
+  .note-card {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    padding: 1rem;
+  }
+}
+
+/* =================================================================
+   Reduced Motion
+   ================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .view.active {
+    animation: none;
+  }
+  
+  .modal-content {
+    animation: none;
+  }
+  
+  .toast {
+    animation: none;
+  }
+  
+  .install-banner {
+    animation: none;
+  }
+  
+  /* Disable all transforms */
+  .card:hover,
+  .note-card:hover,
+  .btn:hover {
+    transform: none;
+  }
+}
+
+/* =================================================================
+   Container Queries (Future-proofing)
+   ================================================================= */
+
+/* When container queries are fully supported */
+@supports (container-type: inline-size) {
+  .notes-list {
+    container-type: inline-size;
+  }
+  
+  @container (min-width: 600px) {
+    .note-card {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--space-4);
+    }
+  }
+}
+
+/* =================================================================
+   Performance Optimizations for Large Screens
+   ================================================================= */
+
+@media (min-width: 1024px) {
+  /* Use CSS Grid for better performance on large screens */
+  .app {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
+  }
+  
+  /* GPU acceleration for smooth scrolling */
+  .main {
+    will-change: scroll-position;
+    transform: translate3d(0, 0, 0);
+  }
+  
+  /* Optimize large lists with virtualization hint */
+  .notes-list {
+    contain: layout style paint;
+  }
+}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug - Brain</title>
+  <style>
+    body {
+      font-family: system-ui;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .status {
+      padding: 20px;
+      margin: 10px 0;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .error { background: #fee; border-left: 4px solid #f00; }
+    .success { background: #efe; border-left: 4px solid #0f0; }
+    .info { background: #eef; border-left: 4px solid #00f; }
+    pre {
+      background: #333;
+      color: #0f0;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 Brain PWA Debug</h1>
+  <div id="status"></div>
+  <h2>Console Output:</h2>
+  <pre id="console"></pre>
+
+  <script type="module">
+    const statusDiv = document.getElementById('status');
+    const consoleDiv = document.getElementById('console');
+    
+    // Capture console
+    const originalLog = console.log;
+    const originalError = console.error;
+    const originalWarn = console.warn;
+    
+    function logToPage(type, ...args) {
+      const message = args.map(arg => 
+        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+      ).join(' ');
+      consoleDiv.textContent += `[${type.toUpperCase()}] ${message}\n`;
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    }
+    
+    console.log = (...args) => {
+      originalLog(...args);
+      logToPage('log', ...args);
+    };
+    
+    console.error = (...args) => {
+      originalError(...args);
+      logToPage('error', ...args);
+    };
+    
+    console.warn = (...args) => {
+      originalWarn(...args);
+      logToPage('warn', ...args);
+    };
+
+    // Test imports one by one
+    async function testImports() {
+      const tests = [
+        { name: 'Database', path: './src/js/db.js' },
+        { name: 'AI Service', path: './src/js/ai.js' },
+        { name: 'State Manager', path: './src/js/state.js' },
+        { name: 'Event Bus', path: './src/js/events-utility.js' },
+        { name: 'Performance Monitor', path: './src/js/performance-utility.js' },
+        { name: 'Today View', path: './src/js/views/today.js' },
+        { name: 'Library View', path: './src/js/views/library.js' },
+        { name: 'TOC View', path: './src/js/views/toc.js' },
+        { name: 'Files View', path: './src/js/views/files.js' },
+        { name: 'Detail View', path: './src/js/views/detail.js' },
+        { name: 'Review View', path: './src/js/views/review.js' },
+        { name: 'Note Card', path: './src/js/components/note-card.js' },
+        { name: 'Toast', path: './src/js/components/toast.js' },
+        { name: 'Keyboard Shortcuts', path: './src/js/components/keyboard-shortcuts.js' },
+        { name: 'Theme Manager', path: './src/js/utils/theme.js' },
+        { name: 'Export Service', path: './src/js/services/export.js' },
+        { name: 'Onboarding', path: './src/js/components/onboarding.js' },
+        { name: 'Accessibility', path: './src/js/utils/accessibility.js' },
+        { name: 'Offline Manager', path: './src/js/services/offline.js' },
+        { name: 'Main App', path: './src/js/app.js' }
+      ];
+
+      for (const test of tests) {
+        try {
+          statusDiv.innerHTML += `<div class="status info">Testing: ${test.name}...</div>`;
+          await import(test.path);
+          statusDiv.innerHTML += `<div class="status success">✅ ${test.name} loaded successfully</div>`;
+          console.log(`✅ ${test.name} loaded`);
+        } catch (error) {
+          statusDiv.innerHTML += `<div class="status error">❌ ${test.name} failed: ${error.message}</div>`;
+          console.error(`❌ ${test.name} failed:`, error);
+          break; // Stop at first failure
+        }
+      }
+    }
+
+    testImports().catch(err => {
+      console.error('Test suite failed:', err);
+    });
+  </script>
+</body>
+</html>

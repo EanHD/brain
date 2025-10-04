@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Page</title>
+  <style>
+    body {
+      font-family: system-ui;
+      padding: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+    }
+    h1 { font-size: 3em; margin: 0; }
+    p { font-size: 1.5em; margin-top: 20px; }
+    .status { 
+      background: rgba(255,255,255,0.2);
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h1>✅ Server is Working!</h1>
+  <p>If you can see this, the Vite dev server is running correctly.</p>
+  <div class="status">
+    <p><strong>Current URL:</strong> <span id="url"></span></p>
+    <p><strong>Time:</strong> <span id="time"></span></p>
+  </div>
+  
+  <script>
+    document.getElementById('url').textContent = window.location.href;
+    document.getElementById('time').textContent = new Date().toLocaleString();
+    console.log('✅ Test page loaded successfully');
+  </script>
+</body>
+</html>
